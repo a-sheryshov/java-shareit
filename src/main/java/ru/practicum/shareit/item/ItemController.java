@@ -19,14 +19,14 @@ public class ItemController extends AbstractEntityController<ItemDto> {
     final ItemService itemService;
 
     @Autowired
-    public ItemController(ItemService itemService){
+    public ItemController(ItemService itemService) {
         super(itemService);
         this.itemService = itemService;
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text, HttpServletRequest request) {
-        log.info(INFO_LOG_MSG_RGX ,
+        log.info(INFO_LOG_MSG_RGX,
                 request.getMethod(), request.getRequestURI(), "N/A");
         return itemService.search(text);
     }
@@ -34,7 +34,7 @@ public class ItemController extends AbstractEntityController<ItemDto> {
     @GetMapping
     public List<ItemDto> readAll(HttpServletRequest request) {
         Long userId = getUserId(request);
-        log.info(INFO_LOG_MSG_RGX ,
+        log.info(INFO_LOG_MSG_RGX,
                 request.getMethod(), request.getRequestURI(), userId);
         return itemService.readAll(userId);
     }
@@ -46,15 +46,14 @@ public class ItemController extends AbstractEntityController<ItemDto> {
     }
     @Override
     @PatchMapping("/{id}")
-    public ItemDto update(@PathVariable final Long id, @RequestBody final ItemDto itemDto
-            , HttpServletRequest request) {
+    public ItemDto update(@PathVariable final Long id, @RequestBody final ItemDto itemDto, HttpServletRequest request) {
         Long userId = getUserId(request);
         return super.update(id, itemDto.toBuilder().owner(userId).build(), request);
     }
 
-    private Long getUserId(HttpServletRequest request){
+    private Long getUserId(HttpServletRequest request) {
         String userIdHeader = request.getHeader("X-Sharer-User-Id");
-        if (!(userIdHeader != null && userIdHeader.isBlank())){
+        if (!(userIdHeader != null && userIdHeader.isBlank())) {
             return Long.parseLong(userIdHeader);
         } else {
             throw new NoUserIdHeaderException("X-Sharer-User-Id header is mandatory");

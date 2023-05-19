@@ -15,7 +15,7 @@ public class InMemoryUserStorageImpl extends AbstractEntityStorageImpl<User> imp
         this.itemStorage = itemStorage;
     }
     @Override
-    public void delete (Long userId){
+    public void delete(Long userId) {
         itemStorage.readAll(userId).stream().map(Item::getId).forEach(itemStorage::delete);
         super.delete(userId);
     }

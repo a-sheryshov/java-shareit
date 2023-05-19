@@ -14,7 +14,7 @@ import java.util.Map;
 @Validated
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractEntityStorageImpl <E extends AbstractEntity> implements Storage<E> {
+public abstract class AbstractEntityStorageImpl<E extends AbstractEntity> implements Storage<E> {
     private final Class<E> type;
     private final Map<Long, E> kvStorage = new HashMap<>();
     private long counter = 1L;
@@ -34,11 +34,11 @@ public abstract class AbstractEntityStorageImpl <E extends AbstractEntity> imple
         return kvStorage.get(id);
     }
     @Override
-    public List<E> readAll(){
+    public List<E> readAll() {
         return new ArrayList<>(kvStorage.values());
     }
     @Override
-    public E update(@Valid E obj){
+    public E update(@Valid E obj) {
         if (!kvStorage.containsKey(obj.getId())) {
             log.info(type.getSimpleName() + " with ID " + obj.getId() + " not found. Creating new.");
             return create(obj);
@@ -48,7 +48,7 @@ public abstract class AbstractEntityStorageImpl <E extends AbstractEntity> imple
     }
 
     @Override
-    public void delete(Long id){
+    public void delete(Long id) {
         if (!kvStorage.containsKey(id)) {
             String message = type.getSimpleName() + " with ID " + id + " not found.";
             throw new ObjectNotFoundException(message);

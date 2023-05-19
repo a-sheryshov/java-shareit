@@ -29,13 +29,13 @@ public abstract class AbstractEntityController<D extends AbstractEntityDto> {
     }
     @GetMapping("/{id}")
     public D read(@PathVariable final Long id, HttpServletRequest request) {
-        log.info(INFO_LOG_MSG_RGX ,
+        log.info(INFO_LOG_MSG_RGX,
                 request.getMethod(), request.getRequestURI(), id);
         return service.read(id);
     }
     @GetMapping
     public List<D> readAll(HttpServletRequest request) {
-        log.info(INFO_LOG_MSG_RGX ,
+        log.info(INFO_LOG_MSG_RGX,
                 request.getMethod(), request.getRequestURI(), "N/A");
         return service.readAll();
     }

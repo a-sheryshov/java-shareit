@@ -14,7 +14,7 @@ import ru.practicum.shareit.user.service.UserService;
 public class UserController extends AbstractEntityController<UserDto> {
     final UserService userService;
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService) {
         super(userService);
         this.userService = userService;
     }

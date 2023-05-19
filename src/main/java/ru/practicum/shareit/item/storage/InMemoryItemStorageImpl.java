@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Repository
 public class InMemoryItemStorageImpl extends AbstractEntityStorageImpl<Item> implements ItemStorage {
 
-    public InMemoryItemStorageImpl(){
+    public InMemoryItemStorageImpl() {
         super(Item.class);
     }
 

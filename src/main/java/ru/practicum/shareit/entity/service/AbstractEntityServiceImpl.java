@@ -33,7 +33,7 @@ public abstract class AbstractEntityServiceImpl<E extends AbstractEntity, D exte
         return mapper.toDto(result);
     }
     @Override
-    public D update(@Valid @Positive Long id, @Valid D dto){
+    public D update(@Valid @Positive Long id, @Valid D dto) {
         E objToUpdate = storage.read(id);
         BeanUtils.copyProperties(dto, objToUpdate, getIdAndNullPropertyNames(dto));
         E result = storage.update(objToUpdate);
@@ -49,16 +49,16 @@ public abstract class AbstractEntityServiceImpl<E extends AbstractEntity, D exte
     }
 
     @Override
-    public void delete(@Valid @Positive Long id){
+    public void delete(@Valid @Positive Long id) {
         storage.delete(id);
         log.info("{} deleted: {}", type.getSimpleName(), id);
     }
-    public static String[] getIdAndNullPropertyNames (Object source) {
+    public static String[] getIdAndNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
         java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
         Set<String> emptyNames = new HashSet<>();
-        for(java.beans.PropertyDescriptor pd : pds) {
+        for (java.beans.PropertyDescriptor pd : pds) {
             Object srcValue = src.getPropertyValue(pd.getName());
             if (srcValue == null) emptyNames.add(pd.getName());
         }

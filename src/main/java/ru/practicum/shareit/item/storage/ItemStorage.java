@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 public interface ItemStorage extends Storage<Item> {
-    List<Item> readAll (Long userId);
+    List<Item> readAll(Long userId);
     List<Item> search(String query);
 
 }

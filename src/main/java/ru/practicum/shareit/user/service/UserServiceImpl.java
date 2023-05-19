@@ -22,13 +22,13 @@ public class UserServiceImpl extends AbstractEntityServiceImpl<User, UserDto> im
     }
 
     @Override
-    public UserDto create(@Valid UserDto userDto){
+    public UserDto create(@Valid UserDto userDto) {
         throwIfEmailNotUnique(userDto);
         return super.create(userDto);
     }
 
     @Override
-    public UserDto update(@Valid @Positive Long id, @Valid UserDto userDto){
+    public UserDto update(@Valid @Positive Long id, @Valid UserDto userDto) {
         userDto = userDto.toBuilder().id(id).build();
         throwIfEmailNotUnique(userDto);
         return super.update(id, userDto);
@@ -39,7 +39,7 @@ public class UserServiceImpl extends AbstractEntityServiceImpl<User, UserDto> im
             if (userDtoToCheck.getEmail() == null) {
                 return;
             }
-            if (userDtoToCheck.getId() != null){
+            if (userDtoToCheck.getId() != null) {
                 if (user.getEmail().equalsIgnoreCase(userDtoToCheck.getEmail())
                         && !user.getId().equals(userDtoToCheck.getId())) {
                     throw new EmailAlreadyInUseException("Email " + userDtoToCheck.getEmail() + " already in use.");
