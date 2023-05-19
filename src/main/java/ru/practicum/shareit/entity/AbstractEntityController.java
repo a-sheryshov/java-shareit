@@ -15,24 +15,28 @@ import java.util.List;
 public abstract class AbstractEntityController<D extends AbstractEntityDto> {
     private static final String INFO_LOG_MSG_RGX = "Request '{}' to '{}', objectId: {}";
     private final Service<D> service;
+
     @PostMapping
     public D create(@RequestBody final D dto, HttpServletRequest request) {
         log.info(INFO_LOG_MSG_RGX,
                 request.getMethod(), request.getRequestURI(), "N/A");
         return service.create(dto);
     }
+
     @PatchMapping("/{id}")
     public D update(@PathVariable final Long id, @RequestBody final D dto, HttpServletRequest request) {
         log.info(INFO_LOG_MSG_RGX,
                 request.getMethod(), request.getRequestURI(), id);
         return service.update(id, dto);
     }
+
     @GetMapping("/{id}")
     public D read(@PathVariable final Long id, HttpServletRequest request) {
         log.info(INFO_LOG_MSG_RGX,
                 request.getMethod(), request.getRequestURI(), id);
         return service.read(id);
     }
+
     @GetMapping
     public List<D> readAll(HttpServletRequest request) {
         log.info(INFO_LOG_MSG_RGX,

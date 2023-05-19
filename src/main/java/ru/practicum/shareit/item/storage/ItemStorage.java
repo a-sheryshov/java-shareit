@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ItemStorage extends Storage<Item> {
     List<Item> readAll(Long userId);
+
     List<Item> search(String query);
 
 }

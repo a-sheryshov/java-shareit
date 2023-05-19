@@ -30,6 +30,7 @@ public class ItemController extends AbstractEntityController<ItemDto> {
                 request.getMethod(), request.getRequestURI(), "N/A");
         return itemService.search(text);
     }
+
     @Override
     @GetMapping
     public List<ItemDto> readAll(HttpServletRequest request) {
@@ -38,12 +39,14 @@ public class ItemController extends AbstractEntityController<ItemDto> {
                 request.getMethod(), request.getRequestURI(), userId);
         return itemService.readAll(userId);
     }
+
     @Override
     @PostMapping
     public ItemDto create(@RequestBody final ItemDto itemDto, HttpServletRequest request) {
         Long userId = getUserId(request);
         return super.create(itemDto.toBuilder().owner(userId).build(), request);
     }
+
     @Override
     @PatchMapping("/{id}")
     public ItemDto update(@PathVariable final Long id, @RequestBody final ItemDto itemDto, HttpServletRequest request) {

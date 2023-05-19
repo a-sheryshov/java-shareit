@@ -9,8 +9,12 @@ import java.util.List;
 @Validated
 public interface Storage<E extends AbstractEntity> {
     E create(@Valid E obj);
+
     E update(@Valid E obj);
+
     E read(Long id);
+
     List<E> readAll();
+
     void delete(Long id);
 }

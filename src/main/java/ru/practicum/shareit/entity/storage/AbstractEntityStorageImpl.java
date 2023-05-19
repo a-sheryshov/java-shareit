@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Validated
 @Slf4j
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public abstract class AbstractEntityStorageImpl<E extends AbstractEntity> implem
     private final Class<E> type;
     private final Map<Long, E> kvStorage = new HashMap<>();
     private long counter = 1L;
+
     @Override
     public E create(@Valid E obj) {
         obj.setId(counter);
@@ -25,6 +27,7 @@ public abstract class AbstractEntityStorageImpl<E extends AbstractEntity> implem
         kvStorage.put(obj.getId(), obj);
         return obj;
     }
+
     @Override
     public E read(Long id) {
         if (!kvStorage.containsKey(id)) {
@@ -33,10 +36,12 @@ public abstract class AbstractEntityStorageImpl<E extends AbstractEntity> implem
         }
         return kvStorage.get(id);
     }
+
     @Override
     public List<E> readAll() {
         return new ArrayList<>(kvStorage.values());
     }
+
     @Override
     public E update(@Valid E obj) {
         if (!kvStorage.containsKey(obj.getId())) {

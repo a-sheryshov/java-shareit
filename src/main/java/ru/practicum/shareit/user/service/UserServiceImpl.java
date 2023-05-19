@@ -15,6 +15,7 @@ import javax.validation.constraints.Positive;
 @Service
 public class UserServiceImpl extends AbstractEntityServiceImpl<User, UserDto> implements UserService {
     final UserStorage storage;
+
     @Autowired
     public UserServiceImpl(UserStorage storage, UserMapper mapper) {
         super(storage, mapper, User.class);

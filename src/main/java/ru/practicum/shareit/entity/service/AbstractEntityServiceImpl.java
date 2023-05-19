@@ -26,12 +26,14 @@ public abstract class AbstractEntityServiceImpl<E extends AbstractEntity, D exte
     private final Storage<E> storage;
     private final Mapper<E, D> mapper;
     private final Class<E> type;
+
     @Override
     public D create(@Valid D dto) {
         E result = storage.create(mapper.toObject(dto));
         log.info("{} added: {}", type.getSimpleName(), result.getId());
         return mapper.toDto(result);
     }
+
     @Override
     public D update(@Valid @Positive Long id, @Valid D dto) {
         E objToUpdate = storage.read(id);
@@ -40,9 +42,11 @@ public abstract class AbstractEntityServiceImpl<E extends AbstractEntity, D exte
         log.info("{} updated: {}", type.getSimpleName(), id);
         return mapper.toDto(result);
     }
+
     public D read(@Valid @Positive Long id) {
         return mapper.toDto(storage.read(id));
     }
+
     @Override
     public List<D> readAll() {
         return storage.readAll().stream().map(mapper::toDto).collect(Collectors.toList());
@@ -53,6 +57,7 @@ public abstract class AbstractEntityServiceImpl<E extends AbstractEntity, D exte
         storage.delete(id);
         log.info("{} deleted: {}", type.getSimpleName(), id);
     }
+
     public static String[] getIdAndNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
         java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();

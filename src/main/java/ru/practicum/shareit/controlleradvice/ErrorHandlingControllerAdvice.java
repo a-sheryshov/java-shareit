@@ -54,6 +54,7 @@ public class ErrorHandlingControllerAdvice {
         log.error(logMessage.toString());
         return new ValidationErrorResponse(violations);
     }
+
     @ExceptionHandler(EmailAlreadyInUseException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
@@ -63,6 +64,7 @@ public class ErrorHandlingControllerAdvice {
         log.error(e.getMessage());
         return new ApplicationError(HttpStatus.CONFLICT.value(), e.getMessage());
     }
+
     @ExceptionHandler(NoUserIdHeaderException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
@@ -72,6 +74,7 @@ public class ErrorHandlingControllerAdvice {
         log.error(e.getMessage());
         return new ApplicationError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
+
     @ExceptionHandler(ForbiddenException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
