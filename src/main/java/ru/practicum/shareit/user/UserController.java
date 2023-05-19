@@ -13,6 +13,7 @@ import ru.practicum.shareit.user.service.UserService;
 @RequestMapping(path = "/users")
 public class UserController extends AbstractEntityController<UserDto> {
     final UserService userService;
+
     @Autowired
     public UserController(UserService userService) {
         super(userService);
