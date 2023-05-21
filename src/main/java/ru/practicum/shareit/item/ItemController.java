@@ -56,10 +56,10 @@ public class ItemController extends AbstractEntityController<ItemDto> {
 
     private Long getUserId(HttpServletRequest request) {
         String userIdHeader = request.getHeader("X-Sharer-User-Id");
-        if (!(userIdHeader != null && userIdHeader.isBlank())) {
+        try {
             return Long.parseLong(userIdHeader);
-        } else {
-            throw new NoUserIdHeaderException("X-Sharer-User-Id header is mandatory");
+        } catch (NumberFormatException e){
+            throw new NoUserIdHeaderException("X-Sharer-User-Id header is incorrect");
         }
     }
 
