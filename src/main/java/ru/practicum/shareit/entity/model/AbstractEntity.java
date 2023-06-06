@@ -4,12 +4,15 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.Positive;
+import javax.persistence.*;
 
+@MappedSuperclass
 @Data
 @SuperBuilder(toBuilder = true)
 @RequiredArgsConstructor
 public abstract class AbstractEntity {
-    @Positive(message = "Should be greater than 0")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     protected Long id;
 }

@@ -1,4 +1,5 @@
 package ru.practicum.shareit.item.validation;
+
 public class ItemValidationConstants {
     public static final int MAX_DESCRIPTION_LEN = 200;
     public static final int MAX_NAME_LEN = 50;
