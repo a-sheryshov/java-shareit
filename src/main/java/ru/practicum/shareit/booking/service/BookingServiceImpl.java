@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,23 +28,15 @@ import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.BookingStatus.*;
 
-@Service
+@AllArgsConstructor
 @Validated
+@Service
 public class BookingServiceImpl implements BookingService {
     private final Sort sort = Sort.by(Sort.Direction.DESC, "start");
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final BookingMapper bookingMapper;
-
-    @Autowired
-    public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository,
-                              ItemRepository itemRepository, BookingMapper bookingMapper) {
-        this.bookingRepository = bookingRepository;
-        this.userRepository = userRepository;
-        this.itemRepository = itemRepository;
-        this.bookingMapper = bookingMapper;
-    }
 
     @Transactional
     @Override
