@@ -1,6 +1,6 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.*;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.shareit.entity.model.AbstractEntity;
 
@@ -8,7 +8,8 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
-import static ru.practicum.shareit.request.validation.ItemRequestValidationConstants.*;
+import static ru.practicum.shareit.request.validation.ItemRequestValidationConstants.DESC_LEN_VALIDATION_ERR_MSG;
+import static ru.practicum.shareit.request.validation.ItemRequestValidationConstants.MAX_DESCRIPTION_LEN;
 
 @Getter
 @SuperBuilder

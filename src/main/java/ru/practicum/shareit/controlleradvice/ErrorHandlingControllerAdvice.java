@@ -1,12 +1,16 @@
 package ru.practicum.shareit.controlleradvice;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import ru.practicum.shareit.booking.exception.BookingException;
+import ru.practicum.shareit.booking.exception.UnsupportedStatusException;
 import ru.practicum.shareit.entity.exception.ObjectNotFoundException;
+import ru.practicum.shareit.item.exception.CommentCreationException;
 import ru.practicum.shareit.item.exception.ForbiddenException;
 import ru.practicum.shareit.item.exception.NoUserIdHeaderException;
 import ru.practicum.shareit.user.exception.EmailAlreadyInUseException;
@@ -83,6 +87,46 @@ public class ErrorHandlingControllerAdvice {
     ) {
         log.error(e.getMessage());
         return new ApplicationError(HttpStatus.FORBIDDEN.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public ApplicationError onDataIntegrityViolationException(
+            DataIntegrityViolationException e
+    ) {
+        log.error(e.getMessage());
+        return new ApplicationError(HttpStatus.CONFLICT.value(), "Data integrity violation");
+    }
+
+    @ExceptionHandler(BookingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApplicationError onBookingException(
+            BookingException e
+    ) {
+        log.error(e.getMessage());
+        return new ApplicationError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(UnsupportedStatusException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApplicationError onUnsupportedStatusException(
+            UnsupportedStatusException e
+    ) {
+        log.error(e.getMessage());
+        return new ApplicationError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(CommentCreationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApplicationError onCommentCreationException(
+            CommentCreationException e
+    ) {
+        log.error(e.getMessage());
+        return new ApplicationError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
