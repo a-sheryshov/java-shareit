@@ -8,9 +8,6 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-
 @Service
 public class UserServiceDbImpl extends AbstractEntityServiceImpl<User, UserDto> implements UserService {
 
@@ -20,7 +17,7 @@ public class UserServiceDbImpl extends AbstractEntityServiceImpl<User, UserDto> 
     }
 
     @Override
-    public UserDto update(@Valid @Positive Long id, @Valid UserDto userDto) {
+    public UserDto update(Long id, UserDto userDto) {
         userDto = userDto.toBuilder().id(id).build();
         return super.update(id, userDto);
     }

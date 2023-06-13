@@ -11,7 +11,6 @@ import ru.practicum.shareit.user.model.User;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -34,7 +33,6 @@ public class ItemRequest extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "requestor_id", referencedColumnName = "id")
     @NotNull(message = "Requestor ID is mandatory")
-    @Positive(message = "Requestor ID should be positive")
     private User requestor;
     @NotNull(message = "Item request creation time is mandatory")
     private LocalDateTime created;

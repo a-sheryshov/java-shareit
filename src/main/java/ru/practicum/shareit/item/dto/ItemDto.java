@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.entity.dto.AbstractEntityDto;
-import ru.practicum.shareit.request.model.ItemRequest;
 
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -24,7 +23,7 @@ public class ItemDto extends AbstractEntityDto {
     private String description;
     private Long ownerId;
     private Boolean available;
-    private ItemRequest request;
+    private Long requestId;
     private BookingShortDto lastBooking;
     private BookingShortDto nextBooking;
     private List<CommentDto> comments;

@@ -3,6 +3,8 @@ package ru.practicum.shareit.controlleradvice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -97,6 +99,26 @@ public class ErrorHandlingControllerAdvice {
     ) {
         log.error(e.getMessage());
         return new ApplicationError(HttpStatus.CONFLICT.value(), "Data integrity violation");
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApplicationError onMethodArgumentNotValidException(
+            MethodArgumentNotValidException e
+    ) {
+        log.error(e.getMessage());
+        return new ApplicationError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApplicationError onMissingServletRequestParameterException(
+            MissingServletRequestParameterException e
+    ) {
+        log.error(e.getMessage());
+        return new ApplicationError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
     @ExceptionHandler(BookingException.class)

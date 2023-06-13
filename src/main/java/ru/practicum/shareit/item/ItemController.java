@@ -26,19 +26,22 @@ public class ItemController extends AbstractEntityController<ItemDto> {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam String text, HttpServletRequest request) {
+    public List<ItemDto> search(@RequestParam String text,
+                                @RequestParam(defaultValue = "0") int from,
+                                @RequestParam(defaultValue = "10") int size, HttpServletRequest request) {
         log.info(INFO_LOG_MSG_RGX,
-                request.getMethod(), request.getRequestURI(), "N/A");
-        return itemService.search(text);
+                request.getMethod(), request.getRequestURI(), text);
+        return itemService.search(text, from, size);
     }
 
-    @Override
     @GetMapping
+    @Override
     public List<ItemDto> readAll(HttpServletRequest request) {
         Long userId = getUserId(request);
         log.info(INFO_LOG_MSG_RGX,
                 request.getMethod(), request.getRequestURI(), userId);
-        return itemService.readAll(userId);
+        return itemService.readAll(userId, getParameter(request, "from", 0),
+                getParameter(request, "size", 10));
     }
 
     @Override
@@ -66,8 +69,12 @@ public class ItemController extends AbstractEntityController<ItemDto> {
 
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId,
-                                    @RequestBody CommentDto commentDto) {
-        return itemService.createComment(itemId, userId, commentDto);
+                                    @RequestBody CommentDto commentDto, HttpServletRequest request) {
+        CommentDto result = itemService.createComment(itemId, userId, commentDto);
+        log.info(INFO_LOG_MSG_RGX,
+                request.getMethod(), request.getRequestURI(), result.getId());
+        return result;
+
     }
 
     private Long getUserId(HttpServletRequest request) {
@@ -78,5 +85,15 @@ public class ItemController extends AbstractEntityController<ItemDto> {
             throw new NoUserIdHeaderException("X-Sharer-User-Id header is incorrect");
         }
     }
+
+    private Integer getParameter(HttpServletRequest request, String name, int def) {
+        String param = request.getParameter(name);
+        try {
+            return Integer.parseInt(param);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
 
 }
