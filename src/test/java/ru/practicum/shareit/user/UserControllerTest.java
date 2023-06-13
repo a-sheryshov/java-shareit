@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,8 +32,9 @@ public class UserControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    @SneakyThrows
     @Test
-    public void readAllTest() throws Exception {
+    public void readAllTest() {
         when(userService.readAll())
                 .thenReturn(Collections.emptyList());
 
@@ -43,8 +45,9 @@ public class UserControllerTest {
         verify(userService, times(1)).readAll();
     }
 
+    @SneakyThrows
     @Test
-    public void createTest() throws Exception {
+    public void createTest() {
         long userId = 1L;
         UserDto userDto = createTestUserDto(userId);
 
@@ -62,8 +65,9 @@ public class UserControllerTest {
         verify(userService, times(1)).create(any(UserDto.class));
     }
 
+    @SneakyThrows
     @Test
-    public void readTest() throws Exception {
+    public void readTest() {
         long userId = 1L;
         UserDto userDto = createTestUserDto(userId);
 
@@ -77,8 +81,9 @@ public class UserControllerTest {
         verify(userService, times(1)).read(userId);
     }
 
+    @SneakyThrows
     @Test
-    public void updateTest() throws Exception {
+    public void updateTest() {
         long userId = 1L;
         UserDto userDto = createTestUserDto(userId).toBuilder().name("updated").build();
         when(userService.update(any(Long.class), any(UserDto.class)))
@@ -95,8 +100,10 @@ public class UserControllerTest {
         verify(userService, times(1)).update(any(Long.class), any(UserDto.class));
     }
 
+
+    @SneakyThrows
     @Test
-    public void deleteUserByIdTest() throws Exception {
+    public void deleteUserByIdTest() {
         mvc.perform(delete("/users/1"))
                 .andExpect(status().isOk());
 

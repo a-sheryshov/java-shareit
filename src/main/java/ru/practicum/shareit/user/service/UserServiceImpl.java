@@ -9,10 +9,10 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 @Service
-public class UserServiceDbImpl extends AbstractEntityServiceImpl<User, UserDto> implements UserService {
+public class UserServiceImpl extends AbstractEntityServiceImpl<User, UserDto> implements UserService {
 
     @Autowired
-    public UserServiceDbImpl(UserRepository repository, UserMapper mapper) {
+    public UserServiceImpl(UserRepository repository, UserMapper mapper) {
         super(repository, mapper, User.class);
     }
 

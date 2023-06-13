@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -14,8 +15,9 @@ class UserDtoJsonTest {
     @Autowired
     JacksonTester<UserDto> json;
 
+    @SneakyThrows
     @Test
-    void testUserDto() throws Exception {
+    void testUserDto() {
         UserDto userDto = UserDto
                 .builder()
                 .id(1L)

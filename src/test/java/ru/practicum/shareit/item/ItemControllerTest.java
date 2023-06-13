@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,9 @@ class ItemControllerTest {
                 .build();
     }
 
+    @SneakyThrows
     @Test
-    void getAllTest() throws Exception {
+    void getAllTest() {
         when(itemService.readAll(anyLong(), anyInt(), anyInt()))
                 .thenReturn(List.of(itemDto));
         mvc.perform(get("/items")
@@ -66,8 +68,9 @@ class ItemControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(List.of(itemDto))));
     }
 
+    @SneakyThrows
     @Test
-    void getByIdTest() throws Exception {
+    void getByIdTest() {
         when(itemService.read(anyLong(), anyLong()))
                 .thenReturn(itemDto);
         mvc.perform(get("/items/1")
@@ -79,8 +82,9 @@ class ItemControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(itemDto)));
     }
 
+    @SneakyThrows
     @Test
-    void createTest() throws Exception {
+    void createTest() {
         when(itemService.create(any(ItemDto.class)))
                 .thenReturn(itemDto);
         mvc.perform(post("/items")
@@ -93,8 +97,9 @@ class ItemControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(itemDto)));
     }
 
+    @SneakyThrows
     @Test
-    void updateTest() throws Exception {
+    void updateTest() {
         when(itemService.update(anyLong(), any(ItemDto.class)))
                 .thenReturn(itemDto);
         mvc.perform(patch("/items/1")
@@ -107,8 +112,9 @@ class ItemControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(itemDto)));
     }
 
+    @SneakyThrows
     @Test
-    void searchTest() throws Exception {
+    void searchTest() {
         when(itemService.search(anyString(), anyInt(), anyInt()))
                 .thenReturn(List.of(itemDto));
         mvc.perform(get("/items/search?text='name'")
@@ -120,8 +126,9 @@ class ItemControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(List.of(itemDto))));
     }
 
+    @SneakyThrows
     @Test
-    void createCommentTest() throws Exception {
+    void createCommentTest() {
         when(itemService.createComment(anyLong(), anyLong(), any()))
                 .thenReturn(commentDto);
         mvc.perform(post("/items/1/comment")

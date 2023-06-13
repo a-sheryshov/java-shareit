@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -48,8 +49,9 @@ public class BookingControllerTest {
     @Autowired
     MockMvc mvc;
 
+    @SneakyThrows
     @Test
-    public void createBookingTest() throws Exception {
+    public void createBookingTest() {
         BookingShortDto inputDto = generateInputDto();
         BookingDto responseDto = generateDetailedResponseDto(ID, inputDto);
 
@@ -70,8 +72,9 @@ public class BookingControllerTest {
                 .create(any(BookingShortDto.class), any(Long.class));
     }
 
+    @SneakyThrows
     @Test
-    public void approveBookingTest() throws Exception {
+    public void approveBookingTest() {
         BookingDto responseDto = generateResponseDto(ID);
 
         when(bookingService.approve(any(Long.class), any(Long.class), any(Boolean.class)))
@@ -87,8 +90,9 @@ public class BookingControllerTest {
                 .approve(any(Long.class), any(Long.class), any(Boolean.class));
     }
 
+    @SneakyThrows
     @Test
-    public void readByIdTest() throws Exception {
+    public void readByIdTest() {
         BookingDto responseDto = generateResponseDto(ID);
 
         when(bookingService.readById(any(Long.class), any(Long.class)))
@@ -103,8 +107,9 @@ public class BookingControllerTest {
                 .readById(any(Long.class), any(Long.class));
     }
 
+    @SneakyThrows
     @Test
-    public void readAllBookingsTest() throws Exception {
+    public void readAllBookingsTest() {
         when(bookingService.readAllByUser(any(Long.class), any(String.class),  any(Integer.class), any(Integer.class)))
                 .thenReturn(new ArrayList<>());
 
@@ -120,8 +125,9 @@ public class BookingControllerTest {
                 .readAllByUser(any(Long.class), any(String.class), any(Integer.class), any(Integer.class));
     }
 
+    @SneakyThrows
     @Test
-    public void readAllTest() throws Exception {
+    public void readAllTest() {
         when(bookingService.readAllByOwner(any(Long.class), any(String.class), any(Integer.class), any(Integer.class)))
                 .thenReturn(new ArrayList<>());
 
