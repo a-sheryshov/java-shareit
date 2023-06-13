@@ -78,7 +78,7 @@ class ItemServiceTest {
                 .description("item one updated")
                 .ownerId(1L)
                 .build();
-        Optional<ItemDto> itemDto = Optional.of(itemService.update( 1L, incomeDto));
+        Optional<ItemDto> itemDto = Optional.of(itemService.update(1L, incomeDto));
 
         Assertions.assertThat(itemDto)
                 .isPresent()
