@@ -9,7 +9,6 @@ import ru.practicum.shareit.entity.dto.AbstractEntityDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -33,10 +32,4 @@ public class BookingDto extends AbstractEntityDto {
 
     private Item item;
 
-    @AssertTrue(message = "Booking end time should be after start time")
-    private boolean isValidEndTime() {
-        if (start != null && end != null) {
-            return end.isAfter(start);
-        } else return false;
-    }
 }

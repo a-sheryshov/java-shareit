@@ -13,14 +13,14 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ru.practicum.shareit.request.validation.ItemRequestValidationConstants.DESC_LEN_VALIDATION_ERR_MSG;
-import static ru.practicum.shareit.request.validation.ItemRequestValidationConstants.MAX_DESCRIPTION_LEN;
-
 @Getter
 @Setter
 @RequiredArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class ItemRequestDto extends AbstractEntityDto {
+    public static final int MAX_DESCRIPTION_LEN = 200;
+    public static final String DESC_LEN_VALIDATION_ERR_MSG =
+            "Description should be less than " + MAX_DESCRIPTION_LEN + " symbols";
     @NotBlank
     @Size(max = MAX_DESCRIPTION_LEN, message = DESC_LEN_VALIDATION_ERR_MSG)
     private String description;
