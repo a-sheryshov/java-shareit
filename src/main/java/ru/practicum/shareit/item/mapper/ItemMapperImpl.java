@@ -18,7 +18,7 @@ public class ItemMapperImpl implements ItemMapper {
                 .description(item.getDescription())
                 .ownerId(item.getOwner().getId())
                 .available(item.getAvailable())
-                .request(item.getRequest() != null ? item.getRequest() : null)
+                .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
     }
 
@@ -30,7 +30,6 @@ public class ItemMapperImpl implements ItemMapper {
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .available(dto.getAvailable())
-                .request(dto.getRequest())
                 .build();
     }
 }

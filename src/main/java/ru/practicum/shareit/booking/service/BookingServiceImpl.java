@@ -1,10 +1,10 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.exception.BookingException;
@@ -18,9 +18,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +26,6 @@ import java.util.stream.Collectors;
 import static ru.practicum.shareit.booking.BookingStatus.*;
 
 @AllArgsConstructor
-@Validated
 @Service
 public class BookingServiceImpl implements BookingService {
     private final Sort sort = Sort.by(Sort.Direction.DESC, "start");
@@ -40,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public BookingDto create(@Valid BookingShortDto bookingShortDto, @Positive Long userId) {
+    public BookingDto create(BookingShortDto bookingShortDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("User " + userId + " not found"));
         Item item = itemRepository.findById(bookingShortDto.getItemId())
@@ -63,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public BookingDto approve(@Positive Long bookingId, @Positive Long userId, @NotNull Boolean approved) {
+    public BookingDto approve(Long bookingId, Long userId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ObjectNotFoundException("Booking " + bookingId + " not found"));
         if (!userId.equals(booking.getItem().getOwner().getId())) {
@@ -83,76 +79,87 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingDto> readAllByOwner(@Positive Long userId, String state) {
+    public List<BookingDto> readAllByOwner(Long userId, String state, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("User " + userId + " not found"));
         List<Booking> bookingDtoList = new ArrayList<>();
+        PageRequest pageRequest = PageRequest.of(from / size, size, sort);
         switch (state) {
             case "ALL":
-                bookingDtoList.addAll(bookingRepository.findAllByItemOwner(user, sort));
+                bookingDtoList.addAll(bookingRepository
+                        .findAllByItemOwner(user, pageRequest).toList());
                 break;
             case "CURRENT":
                 bookingDtoList.addAll(bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfter(user,
-                        LocalDateTime.now(), LocalDateTime.now(), sort));
+                        LocalDateTime.now(), LocalDateTime.now(), pageRequest).toList());
                 break;
             case "PAST":
                 bookingDtoList.addAll(bookingRepository.findAllByItemOwnerAndEndBefore(user,
-                        LocalDateTime.now(), sort));
+                        LocalDateTime.now(), pageRequest).toList());
                 break;
             case "FUTURE":
-                bookingDtoList.addAll(bookingRepository.findAllByItemOwnerAndStartAfter(user,
-                        LocalDateTime.now(), sort));
+                bookingDtoList.addAll(bookingRepository.findAllByItemOwnerAndStartAfter(user, LocalDateTime.now(),
+                        pageRequest).toList());
                 break;
             case "WAITING":
-                bookingDtoList.addAll(bookingRepository.findAllByItemOwnerAndStatusEquals(user, WAITING, sort));
+                bookingDtoList.addAll(bookingRepository.findAllByItemOwnerAndStatusEquals(user, WAITING,
+                        pageRequest).toList());
                 break;
             case "REJECTED":
-                bookingDtoList.addAll(bookingRepository.findAllByItemOwnerAndStatusEquals(user, REJECTED, sort));
+                bookingDtoList.addAll(bookingRepository.findAllByItemOwnerAndStatusEquals(user, REJECTED,
+                        pageRequest).toList());
                 break;
             default:
                 throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
         }
 
-        return bookingDtoList.stream().map(bookingMapper::toDto).collect(Collectors.toList());
+        return bookingDtoList
+                .stream()
+                .map(bookingMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookingDto> readAllByUser(@Positive Long userId, String state) {
+    public List<BookingDto> readAllByUser(Long userId, String state, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("User " + userId + " not found"));
         List<Booking> bookingDtoList = new ArrayList<>();
+        PageRequest pageRequest = PageRequest.of(from / size, size, sort);
         switch (state) {
             case "ALL":
-                bookingDtoList.addAll(bookingRepository.findAllByBooker(user, sort));
+                bookingDtoList.addAll(bookingRepository
+                        .findAllByBooker(user,pageRequest).toList());
                 break;
             case "CURRENT":
                 bookingDtoList.addAll(bookingRepository.findAllByBookerAndStartBeforeAndEndAfter(user,
-                        LocalDateTime.now(), LocalDateTime.now(), sort));
+                        LocalDateTime.now(), LocalDateTime.now(), pageRequest).toList());
                 break;
             case "PAST":
                 bookingDtoList.addAll(bookingRepository.findAllByBookerAndEndBefore(user,
-                        LocalDateTime.now(), sort));
+                        LocalDateTime.now(), pageRequest).toList());
                 break;
             case "FUTURE":
-                bookingDtoList.addAll(bookingRepository.findAllByBookerAndStartAfter(user, LocalDateTime.now(), sort));
+                bookingDtoList.addAll(bookingRepository.findAllByBookerAndStartAfter(user, LocalDateTime.now(),
+                        pageRequest).toList());
                 break;
             case "WAITING":
-                bookingDtoList.addAll(bookingRepository.findAllByBookerAndStatusEquals(user, WAITING, sort));
+                bookingDtoList.addAll(bookingRepository.findAllByBookerAndStatusEquals(user, WAITING,
+                        pageRequest).toList());
                 break;
             case "REJECTED":
-                bookingDtoList.addAll(bookingRepository.findAllByBookerAndStatusEquals(user, REJECTED, sort));
+                bookingDtoList.addAll(bookingRepository.findAllByBookerAndStatusEquals(user, REJECTED,
+                        pageRequest).toList());
                 break;
             default:
                 throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
         }
-
         return bookingDtoList.stream().map(bookingMapper::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public BookingDto readById(@Positive Long bookingId, @Positive Long userId) {
+    public BookingDto readById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ObjectNotFoundException("Booking " + bookingId + " not found"));
         if (!userId.equals(booking.getBooker().getId()) && !userId.equals(booking.getItem().getOwner().getId())) {

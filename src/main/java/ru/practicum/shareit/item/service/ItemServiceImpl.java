@@ -2,10 +2,10 @@ package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -22,6 +22,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -34,10 +36,10 @@ import static ru.practicum.shareit.booking.BookingStatus.APPROVED;
 
 @Service
 @Slf4j
-@Validated
 public class ItemServiceImpl extends AbstractEntityServiceImpl<Item, ItemDto> implements ItemService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final ItemMapper itemMapper;
@@ -48,13 +50,15 @@ public class ItemServiceImpl extends AbstractEntityServiceImpl<Item, ItemDto> im
     private final Sort sortIdAsc = Sort.by(Sort.Direction.ASC, "id");
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository,
-                           BookingRepository bookingRepository, CommentRepository commentRepository,
-                           ItemMapper itemMapper, BookingMapper bookingMapper, CommentMapper commentMapper) {
+    public ItemServiceImpl(ItemRepository itemRepository, ItemRequestRepository itemRequestRepository,
+                           UserRepository userRepository, BookingRepository bookingRepository,
+                           CommentRepository commentRepository, ItemMapper itemMapper,
+                           BookingMapper bookingMapper, CommentMapper commentMapper) {
         super(itemRepository, itemMapper, Item.class);
         this.itemMapper = itemMapper;
         this.userRepository = userRepository;
         this.itemRepository = itemRepository;
+        this.itemRequestRepository = itemRequestRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
         this.bookingMapper = bookingMapper;
@@ -68,6 +72,12 @@ public class ItemServiceImpl extends AbstractEntityServiceImpl<Item, ItemDto> im
         User user = userRepository.findById(itemDto.getOwnerId()).orElseThrow(
                 () -> new ObjectNotFoundException("User " + itemDto.getOwnerId() + " not found"));
         item.setOwner(user);
+        if (itemDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() ->
+                            new ObjectNotFoundException("Item request " + itemDto.getRequestId() + " not found"));
+            item.setRequest(itemRequest);
+        }
         itemRepository.save(item);
         log.info("{} added: {}", Item.class.getSimpleName(), item.getId());
         return itemMapper.toDto(item);
@@ -83,9 +93,13 @@ public class ItemServiceImpl extends AbstractEntityServiceImpl<Item, ItemDto> im
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> readAll(Long userId) {
-        List<Item> items = itemRepository.findAllByOwnerId(userId, sortIdAsc);
-        List<ItemDto> itemDtoList = items.stream().map(itemMapper::toDto).collect(Collectors.toList());
+    public List<ItemDto> readAll(Long userId, int from, int size) {
+        List<ItemDto> itemDtoList = itemRepository.findAllByOwnerId(userId, PageRequest.of(from, size))
+                .stream()
+                .map(itemMapper::toDto)
+                .collect(Collectors.toList());
+        itemDtoList.forEach(itemDto -> itemDto.setComments(commentRepository.findAllByItemId(itemDto.getId())
+                .stream().map(commentMapper::toDto).collect(Collectors.toList())));
         itemDtoList.forEach(itemDto -> {
             List<Booking> lastBooking = bookingRepository.findAllByItemIdAndStartBeforeAndStatusNot(itemDto.getId(),
                     LocalDateTime.now(), BookingStatus.REJECTED, sortDesc);
@@ -95,13 +109,10 @@ public class ItemServiceImpl extends AbstractEntityServiceImpl<Item, ItemDto> im
                     LocalDateTime.now(), BookingStatus.REJECTED, sortAsc);
             itemDto.setNextBooking(nextBooking.isEmpty() ?
                     null : bookingMapper.toDtoShort(nextBooking.get(0)));
-            itemDto.setComments(commentRepository.findAllByItemId(itemDto.getId())
-                    .stream().map(commentMapper::toDto).collect(Collectors.toList()));
         });
         return itemDtoList;
     }
 
-    //@Transactional(readOnly = true)
     @Override
     public ItemDto read(Long id, Long ownerId) {
         Item item = itemRepository.findById(id)
@@ -124,12 +135,16 @@ public class ItemServiceImpl extends AbstractEntityServiceImpl<Item, ItemDto> im
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> search(String query) {
+    public List<ItemDto> search(String query, int from, int size) {
+        List<ItemDto> searchedItems = new ArrayList<>();
         if (query.isBlank()) {
-            return new ArrayList<>();
+            return searchedItems;
         }
-        return itemRepository.findAllByNameOrDescriptionContainingIgnoreCaseAndAvailableTrue(query, query)
-                .stream().map(itemMapper::toDto).collect(Collectors.toList());
+        searchedItems = itemRepository.search(query, PageRequest.of(from, size))
+                .stream()
+                .map(itemMapper::toDto)
+                .collect(Collectors.toList());
+        return searchedItems;
     }
 
     private void checkOwner(Long itemId, Long ownerId) {

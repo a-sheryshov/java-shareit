@@ -6,21 +6,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.entity.dto.AbstractEntityDto;
 import ru.practicum.shareit.entity.exception.ObjectNotFoundException;
 import ru.practicum.shareit.entity.mapper.Mapper;
 import ru.practicum.shareit.entity.model.AbstractEntity;
 import ru.practicum.shareit.entity.repository.Repository;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Validated
 @Slf4j
 @RequiredArgsConstructor
 public abstract class AbstractEntityServiceImpl<E extends AbstractEntity, D extends AbstractEntityDto>
@@ -44,7 +40,7 @@ public abstract class AbstractEntityServiceImpl<E extends AbstractEntity, D exte
     }
 
     @Override
-    public D create(@Valid D dto) {
+    public D create(D dto) {
         E result = repository.save(mapper.toObject(dto));
         log.info("{} added: {}", type.getSimpleName(), result.getId());
         return mapper.toDto(result);
@@ -52,7 +48,7 @@ public abstract class AbstractEntityServiceImpl<E extends AbstractEntity, D exte
 
     @Transactional
     @Override
-    public D update(@Valid @Positive Long id, @Valid D dto) {
+    public D update(Long id, D dto) {
         E objToUpdate = repository.findById(id).orElseThrow(() -> new ObjectNotFoundException(type.getSimpleName()
                 + id + " not found"));
         BeanUtils.copyProperties(dto, objToUpdate, getIdAndNullPropertyNames(dto));
@@ -62,7 +58,7 @@ public abstract class AbstractEntityServiceImpl<E extends AbstractEntity, D exte
     }
 
     @Transactional(readOnly = true)
-    public D read(@Valid @Positive Long id) {
+    public D read(Long id) {
         return mapper.toDto(repository.findById(id).orElseThrow(() -> new ObjectNotFoundException(type.getSimpleName()
                 + id + " not found")));
     }
@@ -75,7 +71,7 @@ public abstract class AbstractEntityServiceImpl<E extends AbstractEntity, D exte
 
     @Transactional
     @Override
-    public void delete(@Valid @Positive Long id) {
+    public void delete(Long id) {
         repository.deleteById(id);
         log.info("{} deleted: {}", type.getSimpleName(), id);
     }

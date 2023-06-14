@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import static ru.practicum.shareit.item.validation.ItemValidationConstants.*;
 
 @Entity
 @Table(name = "items")
@@ -24,6 +23,13 @@ import static ru.practicum.shareit.item.validation.ItemValidationConstants.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Item extends AbstractEntity {
+    public static final int MAX_DESCRIPTION_LEN = 200;
+    public static final int MAX_NAME_LEN = 50;
+    public static final String DESC_LEN_VALIDATION_ERR_MSG =
+            "Description should be less than " + MAX_DESCRIPTION_LEN + " symbols";
+    public static final String NAME_LEN_VALIDATION_ERR_MSG =
+            "Name should be less than " + MAX_NAME_LEN + " symbols";
+
     @Column(length = MAX_NAME_LEN, nullable = false)
     @NotBlank(message = "Name is mandatory")
     @Size(max = MAX_NAME_LEN, message = NAME_LEN_VALIDATION_ERR_MSG)
