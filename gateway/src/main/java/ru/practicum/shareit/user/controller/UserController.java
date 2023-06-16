@@ -11,6 +11,7 @@ import ru.practicum.shareit.user.client.UserClient;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 @Controller
 @RequestMapping("/users")
@@ -27,26 +28,26 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUser(@PathVariable Long id) {
+    public ResponseEntity<Object> getUser(@Positive @PathVariable Long id) {
         log.info("Get user {} request", id);
         return userClient.getUser(id);
     }
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody @Valid UserRequestDto requestDto) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserRequestDto requestDto) {
         log.info("Create user request");
         return userClient.createUser(requestDto);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@RequestBody UserRequestDto requestDto,
-                                             @PathVariable Long id) {
+    public ResponseEntity<Object> updateUser(@Valid @RequestBody UserRequestDto requestDto,
+                                             @Positive @PathVariable Long id) {
         log.info("Update user {} request", id);
         return userClient.updateUser(id, requestDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteUser(@Positive @PathVariable Long id) {
         log.info("Delete user {} request", id);
         return userClient.deleteUser(id);
     }
